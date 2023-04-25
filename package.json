@@ -1,0 +1,61 @@
+{
+    "name": "@hexlet/code.",
+    "version": "1.0.0",
+    "description": "[![Actions Status](https://github.com/KiraBelo/frontend-project-11/workflows/hexlet-check/badge.svg)](https://github.com/KiraBelo/frontend-project-11/actions)",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/hexlet-boilerplates/webpack-package.git"
+    },
+    "author": "KiraBelo",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/hexlet-boilerplates/webpack-package/issues"
+    },
+    "homepage": "https://github.com/hexlet-boilerplates/webpack-package#readme",
+    "jest": {
+        "verbose": true,
+        "testEnvironmentOptions": {
+            "url": "http://localhost/"
+        },
+        "testEnvironment": "jsdom"
+    },
+    "main": "src/init.js",
+    "devDependencies": {
+        "@babel/core": "^7.21.4",
+        "@babel/eslint-parser": "^7.19.1",
+        "@babel/preset-env": "^7.21.4",
+        "babel-jest": "^29.3.1",
+        "babel-loader": "^9.1.2",
+        "css-loader": "^6.7.3",
+        "debug": "^4.3.4",
+        "eslint": "^8.39.0",
+        "eslint-config-airbnb": "^19.0.4",
+        "eslint-config-airbnb-base": "^15.0.0",
+        "eslint-plugin-babel": "^5.3.1",
+        "eslint-plugin-import": "^2.27.5",
+        "eslint-plugin-jest": "^27.2.1",
+        "file-loader": "^6.2.0",
+        "html-webpack-plugin": "^5.5.1",
+        "jest": "^29.3.1",
+        "jest-cli": "^29.3.1",
+        "jest-environment-jsdom": "^29.3.1",
+        "postcss-loader": "^7.2.4",
+        "postcss-preset-env": "^7.8.3",
+        "sass": "^1.62.0",
+        "sass-loader": "^13.2.2",
+        "style-loader": "^3.3.2",
+        "url-loader": "^4.1.1",
+        "webpack": "^5.80.0",
+        "webpack-cli": "^5.0.2",
+        "webpack-dev-server": "^4.11.1"
+    },
+    "dependencies": {
+        "bootstrap": "^5.2.3",
+        "make": "^0.0.0",
+        "npm-check-updates": "^16.6.2"
+    }
+}
