@@ -1,0 +1,14 @@
+{
+    "ru": {
+        "invalid": "URL не может быть использован!",
+        "required": "Обязательное поле!",
+        "url": "Некорректный URL!",
+        "notOneOf": "Этот URL уже определен!"
+    },
+    "en": {
+        "invalid": "URL must be valid!",
+        "required": "Field is required!",
+        "url": "Invalid URL!",
+        "notOneOf": "This URL is already defined!"
+    }
+}
