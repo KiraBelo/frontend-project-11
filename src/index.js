@@ -5,12 +5,11 @@ import { setLocale } from 'yup';
 
 import * as yup from 'yup';
 import onChange from 'on-change';
-import uniqueId from 'lodash/uniqueId.js';
-import view from './view.js';
-import translation from './translation.json';
+import _ from 'lodash';
 import axios from 'axios';
+import translation from './translation.json';
 
-//инициализация библиотеки, указание языков для перевода и источников
+// инициализация библиотеки, указание языков для перевода и источников
 i18next.init({
   lng: 'ru', // основной язык
   debug: true,
@@ -25,29 +24,33 @@ i18next.init({
 });
 // состояние в котором все хранится
 const state = {
-  validationLinks: [],
   feeds: [],
   posts: [],
 };
-//формы
-const form = document.querySelector('.rss-form');
-const urlInput = form.querySelector('#url-input');
-//отслеживание изменений состояния
+// формы
+const elements = {
+  form: document.querySelector('.rss-form'),
+  urlInput: document.querySelector('#url-input'),
+  respondForm: document.querySelector('.feedback'),
+};
+
+// отслеживание изменений состояния
 const watchedState = onChange(state, (path, value) => {
-  const respondForm = document.querySelector('.feedback');
   value.forEach((item) => {
-    console.log(item);
     switch (item.statusUrl) {
       case 'invalid':
-        respondForm.textContent = i18next.t(item.error);
+        elements.respondForm.textContent = i18next.t(item.error);
+        console.log(item.error);
         break;
       case 'valid':
-        respondForm.textContent = '';
-        var xhr = new XMLHttpRequest();
+        elements.respondForm.textContent = '';
         axios
-          .get('https://www.example.com/feed.rss')
+          .get(`https://allorigins.hexlet.app/raw?url=${item.url}`)
           .then((response) => {
-            console.log(response.data);
+            const data = response.data;
+            console.log(data);
+            parseData(data);
+            console.log('lfnf', getPostsFromHTML(data));
           })
           .catch((error) => {
             console.log(error);
@@ -58,12 +61,12 @@ const watchedState = onChange(state, (path, value) => {
     }
   });
 });
-//слушатель событий работает на клик
-form.addEventListener('submit', async (event) => {
+// слушатель событий работает на клик
+elements.form.addEventListener('submit', async (event) => {
   event.preventDefault();
-  //схема валидации
+  // схема валидации
   const schema = yup.object().shape({
-    url: yup.string().url().required().notOneOf(state.validationLinks),
+    url: yup.string().url().required().notOneOf(validLinks(state)),
   });
   // локаль с переопределением текста ошибок
   setLocale({
@@ -78,25 +81,25 @@ form.addEventListener('submit', async (event) => {
       url: 'url',
     },
   });
-  //ссылка которую ввели в форму
+
+  const urlInput = elements.urlInput;
   const data = urlInput.value;
   urlInput.value = '';
   urlInput.focus();
   try {
     const formData = {
-      url: data,
+      url: data.trim(),
     };
     await schema.validate(formData);
     // Если валидация прошла успешно, можно отправить данные в стейт
     const goodUrl = {
-      url: data,
-      statusUrl: 'valid',
-      id: uniqueId(),
+      feed: data,
+      id: _.uniqueId(),
+      status: 'valid',
     };
     watchedState.feeds.push(goodUrl);
-    watchedState.validationLinks.push(data);
   } catch (error) {
-    //если валидация не успешна, то в стайт отправляется другой объект
+    // если валидация не успешна, то в стайт отправляется другой объект
     const badUrl = {
       url: data,
       statusUrl: 'invalid',
@@ -104,4 +107,72 @@ form.addEventListener('submit', async (event) => {
     };
     watchedState.feeds.push(badUrl);
   }
+  console.log(state);
 });
+
+const validLinks = (state) => {
+  const validLink = state.feeds.map((feed) => feed.url);
+  return validLink;
+};
+
+const parseData = (data) => {
+  // console.log('data: ', data);
+  const parser = new DOMParser();
+  const parsedData = parser.parseFromString(data, 'text/html');
+  // console.log('parsedData: ', parsedData);
+  const finalData = {
+    feedTitle: parsedData.querySelector('title').textContent,
+    feedDescription: parsedData.querySelector('description').textContent,
+    postMessage: getPostsFromHTML(parsedData),
+    feedId: _.unicId(), //
+  };
+  console.log(finalData);
+  return finalData;
+};
+
+const getPostsFromHTML = (parsedData) => {
+  const posts = [];
+  const items = parsedData.querySelectorAll('channel > item');
+
+  items.forEach((item) => {
+    // console.log(item);
+    const title = item.querySelector('title').textContent;
+    const linkElement = item.querySelector('link');
+    const link = linkElement.getAttribute('href'); // получаем ссылку из атрибута href
+    console.log(link);
+    const post = `<a href="${link}">${title}</a>`; // добавляем ссылку в тег <a>
+
+    posts.push(post);
+  });
+  console.log(posts);
+  return posts;
+};
+
+const renderPostsBody = (data) => {
+  const postsBody = document.createElement('div');
+  postsBody.classList.add(
+    'col-md-10',
+    'col-lg-8',
+    'order-1',
+    'mx-auto',
+    'posts'
+  );
+  const cardBody = document.createElement('div');
+  cardBody.classList.add('col-md-10', 'col-l');
+  const postsTitle = document.createElement('h2');
+  postsTitle.classList.add('card-title', 'h4');
+  postsTitle.textContent = 'Посты';
+  cardBody.appendChild(postsTitle);
+  postsBody.appendChild(cardBody);
+  const contaner = document.querySelector(
+    '.container-fluid',
+    '.container-xxl',
+    '.p-5'
+  );
+  return contaner.appendChild(postsBody);
+};
+
+const renderPosts = (watchedState) => {
+  const data = watchedState.posts;
+  data.forEach((post) => {});
+};

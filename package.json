@@ -57,6 +57,7 @@
         "axios": "^1.4.0",
         "bootstrap": "^5.2.3",
         "i18next": "^22.5.0",
+        "lodash": "^4.17.21",
         "make": "^0.0.0",
         "npm-check-updates": "^16.6.2",
         "on-change": "^4.0.2",
